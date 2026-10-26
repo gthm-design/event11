@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EventHub — Admin Management Portal</title>
+  <style>
+     
+    :root {
+       
+      --violet-deep: #0a0414;
+      --violet-dark: #120722;
+      --violet-card: #170b2c;
+      --violet-card-hover: #1f0f3a;
+      --violet-primary: #8b5cf6;
+      --violet-primary-hover: #7c3aed;
+      --violet-surface: #260e49;
+      --violet-border: #35165f;
+
+       
+      --yellow-primary: #eab308;
+      --yellow-hover: #facc15;
+      --yellow-surface: #382803;
+      --yellow-text: #fef08a;
+      --yellow-border: rgba(234, 179, 8, 0.4);
+
+       
+      --bg-body: #0d061a;
+      --text-heading: #ffffff;
+      --text-body: #e2d9f3;
+      --text-muted: #a78bfa;
+      --border-color: #29124a;
+
+      
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --danger-surface: rgba(239, 68, 68, 0.15);
+
+      
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-pill: 9999px;
+      --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.4);
+      --shadow-modal: 0 16px 36px rgba(0, 0, 0, 0.7);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-body);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+ 
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+     
+    .app-sidebar {
+      width: 250px;
+      background-color: var(--violet-dark);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 40;
+    }
+
+    .brand-header {
+      height: 68px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-icon-box {
+      width: 38px;
+      height: 38px;
+      background-color: var(--yellow-primary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0d061a;
+      box-shadow: 0 2px 8px rgba(234, 179, 8, 0.4);
+    }
+
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .brand-subtitle {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--yellow-primary);
+      font-weight: 700;
+    }
+
+    .sidebar-navigation {
+      padding: 24px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .nav-anchor-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      border-radius: var(--radius-md);
+      color: #0d061a;
+      background-color: var(--yellow-primary);
+      font-size: 0.875rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .sidebar-bottom-info {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Main Viewport (Right) */
+    .main-viewport {
+      margin-left: 250px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background-color: var(--bg-body);
+    }
+
+    .top-header-bar {
+      height: 68px;
+      background-color: var(--violet-dark);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .breadcrumb-trail {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--yellow-primary);
+    }
+
+    .admin-pill-tag {
+      background-color: var(--violet-surface);
+      color: #ddd6fe;
+      border: 1px solid var(--violet-border);
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.775rem;
+      font-weight: 700;
+    }
+
+    /* Page Content Body */
+    .page-content-area {
+      padding: 32px;
+      max-width: 1250px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .view-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 26px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .view-heading {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--text-heading);
+    }
+
+    .view-subheading {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+     
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      text-decoration: none;
+    }
+
+    .btn-yellow {
+      background-color: var(--yellow-primary);
+      color: #0d061a;
+      box-shadow: 0 2px 10px rgba(234, 179, 8, 0.4);
+    }
+
+    .btn-yellow:hover {
+      background-color: var(--yellow-hover);
+      color: #000000;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background-color: var(--violet-card);
+      color: var(--text-body);
+      border: 1px solid var(--violet-border);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--violet-surface);
+      border-color: var(--violet-primary);
+      color: #ffffff;
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: #ffffff;
+    }
+
+    .btn-danger:hover {
+      background-color: var(--danger-hover);
+    }
+
+    .icon-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: none;
+    }
+
+    .icon-action-btn.edit {
+      color: var(--yellow-primary);
+      background-color: rgba(234, 179, 8, 0.12);
+      border-color: rgba(234, 179, 8, 0.3);
+    }
+
+    .icon-action-btn.edit:hover {
+      background-color: rgba(234, 179, 8, 0.25);
+      color: #ffffff;
+    }
+
+    .icon-action-btn.delete {
+      color: #f87171;
+      background-color: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .icon-action-btn.delete:hover {
+      background-color: rgba(239, 68, 68, 0.25);
+      color: #ffffff;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    .status-badge.upcoming {
+      background-color: var(--yellow-surface);
+      color: var(--yellow-text);
+      border: 1px solid var(--yellow-border);
+    }
+
+    .status-badge.concluded {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: #a78bfa;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .registrations-btn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--violet-surface);
+      color: #ddd6fe;
+      border: 1px solid var(--violet-border);
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .registrations-btn-pill:hover {
+      background-color: #381566;
+      border-color: var(--yellow-primary);
+      color: var(--yellow-primary);
+    }
+
+    
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .metric-card {
+      background-color: var(--violet-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--violet-border);
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .metric-value {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+      margin-top: 4px;
+    }
+
+    .metric-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .metric-icon-box.violet {
+      background-color: var(--violet-surface);
+      color: #c084fc;
+      border: 1px solid var(--violet-border);
+    }
+
+    .metric-icon-box.yellow {
+      background-color: var(--yellow-surface);
+      color: var(--yellow-primary);
+      border: 1px solid var(--yellow-border);
+    }
+
+    .metric-icon-box.amber {
+      background-color: #3b2204;
+      color: #fbbf24;
+      border: 1px solid #78350f;
+    }
+
+    
+    .toolbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .search-container {
+      position: relative;
+      flex: 1;
+      max-width: 420px;
+      min-width: 260px;
+    }
+
+    .search-icon-svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-input-field {
+      width: 100%;
+      padding: 11px 14px 11px 42px;
+      background-color: var(--violet-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: #ffffff;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .search-input-field::placeholder {
+      color: #7c6f96;
+    }
+
+    .search-input-field:focus {
+      border-color: var(--yellow-primary);
+      box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
+    }
+
+    .records-count-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    
+    .table-container-card {
+      background-color: var(--violet-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .table-scroll-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .events-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .events-data-table th {
+      background-color: #120722;
+      color: var(--yellow-primary);
+      font-size: 0.775rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .events-data-table td {
+      padding: 16px 20px;
+      font-size: 0.875rem;
+      color: var(--text-body);
+      border-bottom: 1px solid #230f3f;
+      vertical-align: middle;
+    }
+
+    .events-data-table tbody tr:hover {
+      background-color: #1e0e39;
+    }
+
+    .events-data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .code-tag-badge {
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.775rem;
+      font-weight: 700;
+      color: var(--yellow-primary);
+      background-color: #240e44;
+      border: 1px solid var(--violet-border);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      display: inline-block;
+    }
+
+    .cell-title {
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 0.95rem;
+    }
+
+    .cell-description {
+      font-size: 0.775rem;
+      color: var(--text-muted);
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+
+    .cell-venue-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+
+    .actions-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    
+    .empty-state-panel {
+      padding: 64px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .empty-icon-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: #240e44;
+      color: var(--yellow-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+     
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(5, 2, 10, 0.75);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background-color: var(--violet-card);
+      border-radius: var(--radius-lg);
+      max-width: 520px;
+      width: 100%;
+      box-shadow: var(--shadow-modal);
+      border: 1px solid var(--violet-border);
+      overflow: hidden;
+    }
+
+    .modal-card.wide {
+      max-width: 680px;
+    }
+
+    .modal-header-banner {
+      padding: 18px 24px;
+      background-color: #120722;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .modal-close-cross {
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .modal-body-content {
+      padding: 24px;
+    }
+
+    .modal-footer-actions {
+      padding: 16px 24px;
+      background-color: #120722;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .form-label .req {
+      color: #f87171;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 11px 14px;
+      background-color: #120722;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: #ffffff;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--yellow-primary);
+      box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
+    }
+
+    .form-textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .error-hint {
+      color: #f87171;
+      font-size: 0.775rem;
+      font-weight: 600;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .error-hint.show {
+      display: block;
+    }
+
+     
+    .attendee-scroll-box {
+      max-height: 280px;
+      overflow-y: auto;
+      margin-top: 14px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background-color: #120722;
+    }
+
+    .attendee-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .attendee-item-row:last-child {
+      border-bottom: none;
+    }
+
+     
+    .toast-popup {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      background-color: #240046;
+      color: #ffffff;
+      border: 1px solid var(--yellow-primary);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 200;
+      transform: translateY(-80px);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      pointer-events: none;
+    }
+
+    .toast-popup.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 820px) {
+      .app-sidebar {
+        transform: translateX(-100%);
+      }
+      .main-viewport {
+        margin-left: 0;
+      }
+      .page-content-area {
+        padding: 20px 16px;
+      }
+      .top-header-bar {
+        padding: 0 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  
+  <div id="toastNotification" class="toast-popup">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--yellow-primary);">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span id="toastMessage">Action completed successfully</span>
+  </div>
+
+  <div class="app-shell">
+     
+    <aside class="app-sidebar">
+      <div class="brand-header">
+        <div class="brand-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">EventHub</div>
+          <div class="brand-subtitle">Admin Panel</div>
+        </div>
+      </div>
+
+       
+      <nav class="sidebar-navigation">
+        <div class="nav-anchor-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+            <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+            <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+            <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+          </svg>
+          <span>Dashboard</span>
+        </div>
+      </nav>
+
+      <div class="sidebar-bottom-info">
+        Event Management Portal
+      </div>
+    </aside>
+
+    
+    <main class="main-viewport">
+       
+      <header class="top-header-bar">
+        <div class="breadcrumb-trail">
+          <span>Dashboard</span>
+        </div>
+        <div class="admin-pill-tag">
+          Admin Workspace
+        </div>
+      </header>
+
+       
+      <div class="page-content-area">
+         
+        <div class="view-title-row">
+          <div>
+            <h1 class="view-heading">Admin Event Dashboard</h1>
+            <p class="view-subheading">
+              Manage institutional events, track attendee registrations, and schedule dates.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-outline" id="refreshBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                <path d="M21 3v5h-5"></path>
+                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                <path d="M8 16H3v5"></path>
+              </svg>
+              <span>Refresh</span>
+            </button>
+
+            
+            <button type="button" class="btn btn-yellow" id="openAddEventBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              <span>+ Add Event</span>
+            </button>
+          </div>
+        </div>
+
+         
+        <section class="metrics-row" aria-label="Statistics">
+          <div class="metric-card">
+            <div>
+              <div class="metric-label">Total Events</div>
+              <div class="metric-value" id="kpiTotalEvents">0</div>
+            </div>
+            <div class="metric-icon-box violet">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div>
+              <div class="metric-label">Upcoming Events</div>
+              <div class="metric-value" id="kpiUpcomingEvents">0</div>
+            </div>
+            <div class="metric-icon-box yellow">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="m9 16 2 2 4-4"></path>
+              </svg>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div>
+              <div class="metric-label">Total Registrations</div>
+              <div class="metric-value" id="kpiTotalRegistrations">0</div>
+            </div>
+            <div class="metric-icon-box amber">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+          </div>
+        </section>
+
+         
+        <div class="toolbar-row">
+          <div class="search-container">
+            <svg class="search-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="searchInput" class="search-input-field" placeholder="Search by event title or venue location...">
+          </div>
+
+          <div class="records-count-text" id="filterCountLabel">
+            Showing 0 of 0 events
+          </div>
+        </div>
+
+         
+        <div class="table-container-card">
+          <div class="table-scroll-wrapper">
+            <table class="events-data-table">
+              <thead>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Event Name</th>
+                  <th>Date</th>
+                  <th>Venue</th>
+                  <th>Total Registrations</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="eventsTableBody">
+               
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+   
+  <div id="addEventModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header-banner">
+        <h3 class="modal-header-title">Add New Event</h3>
+        <button type="button" class="modal-close-cross" id="closeAddEventModal">&times;</button>
+      </div>
+
+      <form id="addEventForm" novalidate>
+        <div class="modal-body-content">
+          <div class="form-group">
+            <label class="form-label" for="addEventName">Event Title <span class="req">*</span></label>
+            <input type="text" id="addEventName" class="form-input" placeholder="e.g. National Web Technologies Summit" required>
+            <div id="addNameError" class="error-hint">Please enter an event title (at least 3 characters).</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="addEventDate">Event Date <span class="req">*</span></label>
+            <input type="date" id="addEventDate" class="form-input" required>
+            <div id="addDateError" class="error-hint">Event date cannot be in the past.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="addEventVenue">Venue Location <span class="req">*</span></label>
+            <input type="text" id="addEventVenue" class="form-input" placeholder="e.g. Convention Center, Hall A" required>
+            <div id="addVenueError" class="error-hint">Please specify a venue location.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="addEventDesc">Event Description <span class="req">*</span></label>
+            <textarea id="addEventDesc" class="form-textarea" placeholder="Provide schedule, speakers, topics, and eligibility..." required></textarea>
+            <div id="addDescError" class="error-hint">Please provide at least 10 characters.</div>
+          </div>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" class="btn btn-outline" id="cancelAddEventBtn">Cancel</button>
+          <button type="submit" class="btn btn-yellow">Publish Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  
+  <div id="editEventModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header-banner">
+        <h3 class="modal-header-title">Edit Event</h3>
+        <button type="button" class="modal-close-cross" id="closeEditEventModal">&times;</button>
+      </div>
+
+      <form id="editEventForm" novalidate>
+        <input type="hidden" id="editEventId">
+        <div class="modal-body-content">
+          <div class="form-group">
+            <label class="form-label" for="editEventName">Event Title <span class="req">*</span></label>
+            <input type="text" id="editEventName" class="form-input" required>
+            <div id="editNameError" class="error-hint">Please enter an event title.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="editEventDate">Event Date <span class="req">*</span></label>
+            <input type="date" id="editEventDate" class="form-input" required>
+            <div id="editDateError" class="error-hint">Please select today or a future date.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="editEventVenue">Venue Location <span class="req">*</span></label>
+            <input type="text" id="editEventVenue" class="form-input" required>
+            <div id="editVenueError" class="error-hint">Please specify a venue location.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="editEventDesc">Event Description <span class="req">*</span></label>
+            <textarea id="editEventDesc" class="form-textarea" required></textarea>
+            <div id="editDescError" class="error-hint">Please provide at least 10 characters.</div>
+          </div>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" class="btn btn-outline" id="cancelEditEventBtn">Cancel</button>
+          <button type="submit" class="btn btn-yellow">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  
+  <div id="deleteModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-body-content" style="padding-top: 28px;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background-color: var(--danger-surface); color: #f87171; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">Delete Event</h3>
+        <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">
+          Are you sure you want to permanently delete <strong id="deleteEventTargetName" style="color: var(--yellow-primary);"></strong>?
+        </p>
+
+        <div style="font-size: 0.8rem; color: #f87171; background-color: var(--danger-surface); border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px 14px; border-radius: var(--radius-sm); margin-top: 14px;">
+          This will permanently remove the event and all associated student registration records.
+        </div>
+      </div>
+
+      <div class="modal-footer-actions">
+        <button type="button" class="btn btn-outline" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Confirm Delete</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <div id="attendeesModal" class="modal-backdrop">
+    <div class="modal-card wide">
+      <div class="modal-header-banner">
+        <div>
+          <h3 class="modal-header-title">Registered Attendees</h3>
+          <p id="attendeesEventTitle" style="font-size: 0.8rem; color: var(--yellow-primary); margin-top: 2px;"></p>
+        </div>
+        <button type="button" class="modal-close-cross" id="closeAttendeesModal">&times;</button>
+      </div>
+
+      <div class="modal-body-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span id="attendeesCountLabel" style="font-weight: 700; color: #ffffff; font-size: 0.9rem;">Total Registrations: 0</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Verified attendee records</span>
+        </div>
+
+        <div class="attendee-scroll-box" id="attendeesListContainer">
+           
+        </div>
+
+        
+        <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+          <div style="font-size: 0.825rem; font-weight: 700; color: #ffffff; margin-bottom: 8px;">Quick Register Attendee:</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <input type="text" id="quickAttendeeName" class="form-input" style="flex: 1; min-width: 140px; padding: 8px 12px;" placeholder="Full Name">
+            <input type="email" id="quickAttendeeEmail" class="form-input" style="flex: 1; min-width: 160px; padding: 8px 12px;" placeholder="Email Address">
+            <button type="button" class="btn btn-yellow" id="quickAddAttendeeBtn" style="padding: 8px 14px; font-size: 0.8rem;">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer-actions">
+        <button type="button" class="btn btn-outline" id="dismissAttendeesModal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <script>
+    
+    const DEFAULT_DATASET = [
+      {
+        id: '6adf1379c5b469160ea7ea8d',
+        name: 'National Web Innovations Summit 2026',
+        description: 'An annual flagship conference bringing together web engineers, cloud architects, and full-stack researchers to discuss state-of-the-art web performance, micro-frontends, and AI integrations.',
+        date: '2026-11-15',
+        venue: 'Convention Center, Hall A, Tech Park',
+        attendees: [
+          { name: 'Aarav Sharma', email: 'aarav.sharma@example.edu', phone: '+1-555-0101', date: '2026-10-26' },
+          { name: 'Priya Patel', email: 'priya.patel@example.edu', phone: '+1-555-0102', date: '2026-10-26' },
+          { name: 'David Chen', email: 'david.chen@example.edu', phone: '+1-555-0103', date: '2026-10-26' }
+        ]
+      },
+      {
+        id: '6adf1379c5b469160ea7ea8e',
+        name: 'AI & Data Science Campus Hackathon',
+        description: 'A 36-hour intense hackathon where student developers collaborate to solve real-world problems using machine learning, computer vision, and modern web application frameworks.',
+        date: '2026-11-28',
+        venue: 'Auditorium Complex & Innovation Lab, Block 4',
+        attendees: [
+          { name: 'Elena Rostova', email: 'elena.rostova@example.edu', phone: '+1-555-0104', date: '2026-10-26' },
+          { name: 'Kavita Menon', email: 'kavita.menon@example.edu', phone: '+1-555-0105', date: '2026-10-26' }
+        ]
+      },
+      {
+        id: '6adf1379c5b469160ea7ea8f',
+        name: 'Cloud Security & DevOps Workshop',
+        description: 'Hands-on masterclass focusing on secure CI/CD pipelines, container orchestration with Kubernetes, zero-trust infrastructure, and automated vulnerability scanning.',
+        date: '2026-12-05',
+        venue: 'Virtual Amphitheater & Lab 202',
+        attendees: [
+          { name: 'Liam O’Connor', email: 'liam.oconnor@example.edu', phone: '+1-555-0106', date: '2026-10-26' }
+        ]
+      },
+      {
+        id: '6adf1379c5b469160ea7ea90',
+        name: 'Future of Frontend Frameworks Meetup',
+        description: 'An interactive developer meetup exploring React 19, compiler optimizations, streaming SSR, and micro-frontend patterns with live code demonstrations and speaker Q&A.',
+        date: '2026-12-18',
+        venue: 'Metropolitan Co-working Space, Floor 5',
+        attendees: [
+          { name: 'Sophia Rodriguez', email: 'sophia.r@example.edu', phone: '+1-555-0107', date: '2026-10-26' }
+        ]
+      }
+    ];
+ 
+    let events = [];
+    let deleteTargetId = null;
+    let activeAttendeesEventId = null;
+
+    
+    function loadApplicationState() {
+      const stored = localStorage.getItem('EVENT_REG_DATASET');
+      if (stored) {
+        try {
+          events = JSON.parse(stored);
+        } catch (e) {
+          events = DEFAULT_DATASET;
+        }
+      } else {
+        events = DEFAULT_DATASET;
+        saveApplicationState();
+      }
+      renderDashboard();
+    }
+
+    function saveApplicationState() {
+      localStorage.setItem('EVENT_REG_DATASET', JSON.stringify(events));
+    }
+
+     
+    function formatDateDisplay(dateStr) {
+      if (!dateStr) return 'N/A';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(d);
+    }
+
+    function isDateUpcoming(dateStr) {
+      if (!dateStr) return false;
+      const d = new Date(dateStr);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      d.setHours(0, 0, 0, 0);
+      return d >= today;
+    }
+
+    function getTodayString() {
+      const d = new Date();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${d.getFullYear()}-${month}-${day}`;
+    }
+
+    
+    function showNotification(msg) {
+      const toast = document.getElementById('toastNotification');
+      const text = document.getElementById('toastMessage');
+      text.textContent = msg;
+      toast.classList.add('visible');
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 3000);
+    }
+
+    
+    function renderDashboard() {
+      const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+      const tbody = document.getElementById('eventsTableBody');
+
+      
+      const filtered = events.filter(ev => 
+        (ev.name && ev.name.toLowerCase().includes(searchVal)) ||
+        (ev.venue && ev.venue.toLowerCase().includes(searchVal))
+      );
+
+    
+      const totalEvents = events.length;
+      const upcomingEvents = events.filter(ev => isDateUpcoming(ev.date)).length;
+      const totalRegistrations = events.reduce((sum, ev) => sum + (ev.attendees ? ev.attendees.length : 0), 0);
+
+      document.getElementById('kpiTotalEvents').textContent = totalEvents;
+      document.getElementById('kpiUpcomingEvents').textContent = upcomingEvents;
+      document.getElementById('kpiTotalRegistrations').textContent = totalRegistrations;
+      document.getElementById('filterCountLabel').textContent = `Showing ${filtered.length} of ${events.length} events`;
+
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6">
+              <div class="empty-state-panel">
+                <div class="empty-icon-circle">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </div>
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">No Events Found</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">No records match your query or the event list is empty.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(ev => {
+        const upcoming = isDateUpcoming(ev.date);
+        const count = ev.attendees ? ev.attendees.length : 0;
+        const refCode = `#EVT-${ev.id.slice(-5).toUpperCase()}`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <span class="code-tag-badge">${refCode}</span>
+          </td>
+          <td>
+            <div class="cell-title">${escapeHtml(ev.name)}</div>
+            <div class="cell-description" title="${escapeHtml(ev.description)}">${escapeHtml(ev.description)}</div>
+          </td>
+          <td>
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-weight: 600;">${formatDateDisplay(ev.date)}</span>
+              <span class="status-badge ${upcoming ? 'upcoming' : 'concluded'}">
+                ${upcoming ? 'Upcoming' : 'Concluded'}
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="cell-venue-text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--violet-primary); flex-shrink: 0;">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>${escapeHtml(ev.venue)}</span>
+            </div>
+          </td>
+          <td>
+            <button type="button" class="registrations-btn-pill" onclick="openAttendeesModal('${ev.id}')" title="Click to view registered attendees">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
+              <span>${count} Registered</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8;">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </td>
+          <td style="text-align: right;">
+            <div class="actions-group">
+              <button type="button" class="icon-action-btn edit" onclick="openEditModal('${ev.id}')" title="Edit event">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+              </button>
+              <button type="button" class="icon-action-btn delete" onclick="openDeleteModal('${ev.id}')" title="Delete event">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+     
+    function toggleModal(modalId, show) {
+      const el = document.getElementById(modalId);
+      if (show) el.classList.add('active');
+      else el.classList.remove('active');
+    }
+
+    
+    document.getElementById('openAddEventBtn').addEventListener('click', () => {
+      document.getElementById('addEventForm').reset();
+      document.getElementById('addEventDate').min = getTodayString();
+      clearAddErrors();
+      toggleModal('addEventModal', true);
+    });
+
+    document.getElementById('closeAddEventModal').addEventListener('click', () => toggleModal('addEventModal', false));
+    document.getElementById('cancelAddEventBtn').addEventListener('click', () => toggleModal('addEventModal', false));
+
+    function clearAddErrors() {
+      document.getElementById('addNameError').classList.remove('show');
+      document.getElementById('addDateError').classList.remove('show');
+      document.getElementById('addVenueError').classList.remove('show');
+      document.getElementById('addDescError').classList.remove('show');
+    }
+
+    document.getElementById('addEventForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      clearAddErrors();
+
+      const name = document.getElementById('addEventName').value.trim();
+      const date = document.getElementById('addEventDate').value;
+      const venue = document.getElementById('addEventVenue').value.trim();
+      const desc = document.getElementById('addEventDesc').value.trim();
+
+      let hasError = false;
+
+      if (!name || name.length < 3) {
+        document.getElementById('addNameError').classList.add('show');
+        hasError = true;
+      }
+
+      if (!date || !isDateUpcoming(date)) {
+        document.getElementById('addDateError').classList.add('show');
+        hasError = true;
+      }
+
+      if (!venue || venue.length < 2) {
+        document.getElementById('addVenueError').classList.add('show');
+        hasError = true;
+      }
+
+      if (!desc || desc.length < 10) {
+        document.getElementById('addDescError').classList.add('show');
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      const newId = 'evt_' + Date.now().toString(16) + Math.random().toString(16).slice(2, 6);
+      const newEvent = {
+        id: newId,
+        name,
+        date,
+        venue,
+        description: desc,
+        attendees: []
+      };
+
+      events.unshift(newEvent);
+      saveApplicationState();
+      toggleModal('addEventModal', false);
+      renderDashboard();
+      showNotification(`"${name}" was created successfully!`);
+    });
+
+     
+    window.openEditModal = function(id) {
+      const ev = events.find(item => item.id === id);
+      if (!ev) return;
+
+      document.getElementById('editEventId').value = ev.id;
+      document.getElementById('editEventName').value = ev.name;
+      document.getElementById('editEventDate').value = ev.date;
+      document.getElementById('editEventDate').min = getTodayString();
+      document.getElementById('editEventVenue').value = ev.venue;
+      document.getElementById('editEventDesc').value = ev.description;
+
+      document.getElementById('editNameError').classList.remove('show');
+      document.getElementById('editDateError').classList.remove('show');
+      document.getElementById('editVenueError').classList.remove('show');
+      document.getElementById('editDescError').classList.remove('show');
+
+      toggleModal('editEventModal', true);
+    };
+
+    document.getElementById('closeEditEventModal').addEventListener('click', () => toggleModal('editEventModal', false));
+    document.getElementById('cancelEditEventBtn').addEventListener('click', () => toggleModal('editEventModal', false));
+
+    document.getElementById('editEventForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editEventId').value;
+      const name = document.getElementById('editEventName').value.trim();
+      const date = document.getElementById('editEventDate').value;
+      const venue = document.getElementById('editEventVenue').value.trim();
+      const desc = document.getElementById('editEventDesc').value.trim();
+
+      let hasError = false;
+      if (!name || name.length < 3) {
+        document.getElementById('editNameError').classList.add('show');
+        hasError = true;
+      }
+      if (!date || !isDateUpcoming(date)) {
+        document.getElementById('editDateError').classList.add('show');
+        hasError = true;
+      }
+      if (!venue || venue.length < 2) {
+        document.getElementById('editVenueError').classList.add('show');
+        hasError = true;
+      }
+      if (!desc || desc.length < 10) {
+        document.getElementById('editDescError').classList.add('show');
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      const idx = events.findIndex(item => item.id === id);
+      if (idx !== -1) {
+        events[idx].name = name;
+        events[idx].date = date;
+        events[idx].venue = venue;
+        events[idx].description = desc;
+        saveApplicationState();
+        toggleModal('editEventModal', false);
+        renderDashboard();
+        showNotification(`"${name}" updated successfully!`);
+      }
+    });
+
+     
+    window.openDeleteModal = function(id) {
+      const ev = events.find(item => item.id === id);
+      if (!ev) return;
+      deleteTargetId = id;
+      document.getElementById('deleteEventTargetName').textContent = ev.name;
+      toggleModal('deleteModal', true);
+    };
+
+    document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+      deleteTargetId = null;
+      toggleModal('deleteModal', false);
+    });
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+      if (!deleteTargetId) return;
+      const target = events.find(item => item.id === deleteTargetId);
+      events = events.filter(item => item.id !== deleteTargetId);
+      saveApplicationState();
+      toggleModal('deleteModal', false);
+      renderDashboard();
+      showNotification(`"${target ? target.name : 'Event'}" was deleted.`);
+      deleteTargetId = null;
+    });
+
+    
+    window.openAttendeesModal = function(id) {
+      const ev = events.find(item => item.id === id);
+      if (!ev) return;
+      activeAttendeesEventId = id;
+      document.getElementById('attendeesEventTitle').textContent = ev.name;
+      renderAttendeesList(ev);
+      toggleModal('attendeesModal', true);
+    };
+
+    function renderAttendeesList(ev) {
+      const container = document.getElementById('attendeesListContainer');
+      const countLabel = document.getElementById('attendeesCountLabel');
+      const attendees = ev.attendees || [];
+
+      countLabel.textContent = `Total Registrations: ${attendees.length}`;
+      container.innerHTML = '';
+
+      if (attendees.length === 0) {
+        container.innerHTML = `
+          <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+            No attendees registered for this event yet. Use the form below to record a registration.
+          </div>
+        `;
+        return;
+      }
+
+      attendees.forEach(att => {
+        const row = document.createElement('div');
+        row.className = 'attendee-item-row';
+        row.innerHTML = `
+          <div>
+            <div style="font-weight: 700; color: #ffffff;">${escapeHtml(att.name)}</div>
+            <div style="font-size: 0.775rem; color: var(--text-muted); margin-top: 2px;">
+              ${escapeHtml(att.email)} ${att.phone ? '• ' + escapeHtml(att.phone) : ''}
+            </div>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">
+            ${formatDateDisplay(att.date)}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    document.getElementById('closeAttendeesModal').addEventListener('click', () => toggleModal('attendeesModal', false));
+    document.getElementById('dismissAttendeesModal').addEventListener('click', () => toggleModal('attendeesModal', false));
+
+     
+    document.getElementById('quickAddAttendeeBtn').addEventListener('click', () => {
+      if (!activeAttendeesEventId) return;
+      const nameInput = document.getElementById('quickAttendeeName');
+      const emailInput = document.getElementById('quickAttendeeEmail');
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+
+      if (!name || !email || !email.includes('@')) {
+        alert('Please provide a valid attendee name and email address.');
+        return;
+      }
+
+      const ev = events.find(item => item.id === activeAttendeesEventId);
+      if (ev) {
+        if (!ev.attendees) ev.attendees = [];
+        ev.attendees.push({
+          name,
+          email,
+          phone: '',
+          date: getTodayString()
+        });
+        saveApplicationState();
+        renderAttendeesList(ev);
+        renderDashboard();
+        nameInput.value = '';
+        emailInput.value = '';
+        showNotification(`Attendee "${name}" added!`);
+      }
+    });
+
+     
+    document.getElementById('searchInput').addEventListener('input', renderDashboard);
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      renderDashboard();
+      showNotification('Dashboard refreshed with latest records.');
+    });
+
+     
+    window.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal-backdrop')) {
+        e.target.classList.remove('active');
+      }
+    });
+
+     
+    loadApplicationState();
+  </script>
+</body>
+</html>
